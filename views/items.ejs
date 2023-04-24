@@ -1,0 +1,83 @@
+<%- include('./partials/base.ejs') %>
+    <div class="container my-3">
+        <div class="d-flex justify-content-between mb-3">
+            <h1>Dropshipping Web App</h1>
+                <button class="btn btn-primary" id="add-item-btn">Add Item</button>
+        </div>
+        <% if (items.length > 0) { %>
+            <table class="table">
+                <thead>
+                    <tr>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Description</th>
+                    <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% items.forEach(item => { %>
+                        <tr>
+                            <td>
+                                <img src="<%= item.image_url %>" class="rounded-circle" width="50" height="50">&nbsp;
+                                <a href="/items/<%= item.id %>"><%= item.name %></a>
+                            </td>
+                            <td><%= item.price + ' ' + item.currency %></td>
+                            <td><%= item.description %></td>
+                            <td>
+                                <form action="/del-item" method="post">
+                                    <input type="hidden" name="id" value="<%= item.id %>">
+                                    <button class="btn btn-danger btn-secondary btn-sm" type="submit">Delete Item</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <div class="mb-3">
+                <h3>There are no items yet</h3>
+                <h6>Please <button class="btn btn-primary" id="add-item-btn">Add Items</button> first.</h6>
+            </div>
+        <% } %>
+    </div>
+    <div class="modal fade" id="add-item-modal" tabindex="-1" aria-labelledby="add-item-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="add-item-modal-label">Add Item</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="/add-item" method="post">
+                <div class="mb-3">
+                  <input type="text" class="form-control" name="name" placeholder="Item Name" required>
+                </div>
+                <div class="mb-3 row">
+                  <div class="col">
+                    <input type="number" class="form-control" name="price" placeholder="Price" required>
+                  </div>
+                  <div class="col">
+                    <select name="currency" class="form-control">
+                      <option value="$">US Dollar ($)</option>
+                      <option value="₪">Israeli Shekel (₪)</option>
+                      <option value="€">Euro (€)</option>
+                      <option value="£">British Pound (£)</option>
+                      <option value="¥">Japanese Yen (¥)</option>
+                      <option value="₹">Indian Rupee (₹)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <input type="text" class="form-control" name="image_url" placeholder="Image URL" required>
+                </div>
+                <div class="mb-3">
+                  <textarea name="description" class="form-control" rows="1" oninput="autoSize(this)" placeholder="Description" required></textarea>
+                </div>
+                <input type="submit" class="btn btn-primary">
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+</body>
+</html>
