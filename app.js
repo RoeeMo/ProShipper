@@ -2,8 +2,8 @@ const express = require('express');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose');
-const itemRoutes = require('./routes/itemRoutes')
-const authRoutes = require('./routes/authRoutes')
+const itemRoutes = require('./routes/itemRoutes');
+const authRoutes = require('./routes/authRoutes');
 require('dotenv').config();
 
 
@@ -25,8 +25,8 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 
 // Routes
-app.use(itemRoutes);
 app.use(authRoutes);
+app.use(itemRoutes);
 app.get('/', (req, res) => {
     res.render('index', { title: 'Home' });
 })
