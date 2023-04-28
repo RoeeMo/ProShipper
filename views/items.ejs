@@ -1,4 +1,6 @@
 <%- include('./partials/base.ejs') %>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
     <div class="container my-3">
         <div class="d-flex justify-content-between mb-3">
             <h1>Dropshipping Web App</h1>
@@ -24,10 +26,7 @@
                             <td><%= item.price + ' ' + item.currency %></td>
                             <td><%= item.description %></td>
                             <td>
-                                <form action="/del-item" method="post">
-                                    <input type="hidden" name="id" value="<%= item.id %>">
-                                    <button class="btn btn-danger btn-secondary btn-sm" type="submit">Delete Item</button>
-                                </form>
+                              <button class="btn btn-danger btn-secondary btn-sm delete-btn" data-id="<%= item.id %>">Delete</button>
                             </td>
                         </tr>
                     <% }) %>
@@ -48,7 +47,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <form action="/add-item" method="post">
+              <form method="post" id="add-item">
                 <div class="mb-3">
                   <input type="text" class="form-control" name="name" placeholder="Item Name" required>
                 </div>
@@ -79,5 +78,6 @@
           </div>
         </div>
       </div>
+      <script src="/js/add-item.js"></script>
 </body>
 </html>
