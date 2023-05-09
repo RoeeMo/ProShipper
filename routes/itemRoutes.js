@@ -1,11 +1,12 @@
 const express = require('express');
-const itemController = require('../controllers/itemController')
+const itemController = require('../controllers/itemController');
+const { requireAuth } = require('../middleware/authMiddleware');
 
 const itemRouter = express.Router();
 
-itemRouter.get('/items', itemController.item_index);
-itemRouter.get('/items/:id', itemController.item_details);
-itemRouter.post('/add-item', itemController.add_item);
-itemRouter.post('/del-item', itemController.del_item);
+itemRouter.get('/items', requireAuth('user'), itemController.item_table);
+itemRouter.get('/items/:id', requireAuth('user'), itemController.item_details);
+itemRouter.post('/add-item', requireAuth('admin'), itemController.add_item);
+itemRouter.post('/del-item', requireAuth('admin'), itemController.del_item);
 
 module.exports = itemRouter;

@@ -2,12 +2,15 @@ const User = require('../models/user');
 const Bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const uuid = require('uuid');
+
 
 const JWT_SECRET = process.env.TOP_SECRET;
-const maxAge = 3 * 24 * 60 * 60; // 3 days
+const maxAge = 6 * 60 * 60; // 6 hours
 
-async function createToken(id) {
-    return jwt.sign({id}, JWT_SECRET, { expiresIn: maxAge });
+function createToken(id, type, username) {
+    const jti = uuid.v4();
+    return jwt.sign({id, type, jti, username}, JWT_SECRET, { expiresIn: maxAge });
 };
 
 async function createUser(username, password, password2) {
@@ -46,10 +49,22 @@ async function createUser(username, password, password2) {
     }
 };
 
-
-
+async function getUsername(token) {
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
+            if (err) {
+                console.log(err.message);
+                reject(err);
+            } else {
+                resolve(decodedToken.username);
+            }
+        })
+    })
+    
+};
 
 module.exports = {
     createToken,
-    createUser
+    createUser,
+    getUsername
 }

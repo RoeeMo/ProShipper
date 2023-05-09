@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose');
 const itemRoutes = require('./routes/itemRoutes');
 const authRoutes = require('./routes/authRoutes');
+const { socketSetup } = require("./utils/messageUtils");
 require('dotenv').config();
 
 
@@ -12,8 +13,22 @@ const app = express();
 // MongoDB Connection
 const dbURI = process.env.MONGO_URI;
 mongoose.connect(dbURI)
-    .then((result) => app.listen(3000))
-    .catch((err) => console.log(err));
+    .then((result) => {
+        console.log("Database connected");
+        startServer();
+    })
+    .catch((err) => {
+        console.log(err);
+        process.exit(1);
+    });
+
+// Start Server and Socket
+function startServer() {
+  const server = app.listen(3000, () => {
+    console.log("Server running on http://localhost:3000");
+  });
+  socketSetup(server);
+}
 
 // View Engine
 app.set('view engine', 'ejs')

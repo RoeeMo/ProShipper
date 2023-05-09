@@ -14,15 +14,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (data.success) {
             Swal.fire({
-                title: "Logged in successfully!",
+                title: data.msg,
                 html: "You'll be redirected shortly",
                 icon: "success",
                 showConfirmButton: false,
-                timer: 1500,
+                timer: 800,
                 timerProgressBar: true,
-                didClose: () => { window.location.href = '/items'; } });
+                });
+            setTimeout(() => {
+                window.location.href = '/items';
+            }, 700);
         } else {
-            Swal.fire("Oops", ((data.errs).replaceAll('.', '.<br><br>')), "error");
+            Swal.fire("Oops", data.msg, "error");
         }
-    });
+    })
 });

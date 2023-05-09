@@ -20,6 +20,9 @@
     "lodash": "^4.17.21",
     "mongoose": "^7.0.4",
     "morgan": "^1.10.0",
-    "sweetalert2": "^11.7.3"
+    "redis": "^4.6.6",
+    "socket.io": "^4.6.1",
+    "sweetalert2": "^11.7.3",
+    "uuid": "^9.0.0"
   }
 }

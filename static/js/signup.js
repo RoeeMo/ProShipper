@@ -15,15 +15,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (data.success) {
             Swal.fire({
-                title: "User created successfully",
+                title: data.msg,
                 html: "You'll be redirected shortly",
                 icon: "success",
                 showConfirmButton: false,
-                timer: 1500,
+                timer: 1000,
                 timerProgressBar: true,
                 didClose: () => { window.location.href = '/items'; } });
         } else {
-            Swal.fire("Oops", ((data.errs).replaceAll('.', '.<br><br>')), "error");
+            Swal.fire("Oops", ((data.msg).replaceAll('.', '.<br><br>')), "error");
         }
     });
 });

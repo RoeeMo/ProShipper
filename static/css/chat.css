@@ -1,0 +1,43 @@
+/* Outer container */
+#messages-block {
+  height: 300px;
+  overflow-y: scroll;
+}
+
+/* Individual message container */
+.message-container {
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* Sent message container */
+.message-sent {
+  background-color: #d9edf7;
+  align-self: flex-end;
+}
+
+/* Received message container */
+.message-received {
+  background-color: #f5f5f5;
+}
+
+/* Username text */
+.username {
+  font-weight: bold;
+  color: #333;
+}
+
+/* Message text */
+.message-text {
+  font-size: 16px;
+}
+
+
+
+
+
+
+
+
+

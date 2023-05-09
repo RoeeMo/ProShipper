@@ -1,30 +1,41 @@
 <%- include('./partials/base.ejs') %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
+<script src="/js/socket.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/chat.css"></link>
 <div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="d-flex align-items-center">
-                <h1 class="mr-3"><%= item.name %></h1>
-                <form action="/del-item" method="post">
-                    <input type="hidden" name="id" value="<%= item.id %>">
-                    <button class="btn btn-danger btn-secondary btn-sm" type="submit">Delete Item</button>
-                </form>
-            </div>
-          <img src="<%= item.image_url %>" alt="Item Image" class="rounded-circle" width="250" height="250">
-          <p class="lead"><b><%= item.price + ' ' + item.currency %></b></p>
-          <p class="lead"><%= item.description %></p>
-        </div>
-        <div class="col-md-6">
-            <h2>Chat</h2>
-            <div id="chat-messages"></div>
-            <form id="chat-form">
-                <div class="form-group">
-                    <label for="message">Message:</label>
-                    <textarea class="form-control" id="message" rows="4"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Send</button>
-            </form>
-        </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="d-flex align-items-center">
+          <h1 class="mr-3"><%= item.name %></h1>
+      </div>
+      <img src="<%= item.image_url %>" alt="Item Image" class="rounded-circle" width="250" height="250">
+      <p class="lead"><b><%= item.price + ' ' + item.currency %></b></p>
+      <p class="lead"><%= item.description %></p>
     </div>
+    <div class="col-md-6">
+      <h2>Chat</h2>
+      <div id="messages-block">
+        <% if (messages.length > 0) { %>
+          <% messages.forEach(message => { %>
+            <% if (username == message.sender) { %>  
+              <div class="message-container message-sent">
+            <% } else { %>
+              <div class="message-container message-received">
+            <% } %>
+                <div class="username"><%= message.sender %></div>
+                <div class="message-text"><%= message.text %></div>
+              </div>
+          <% }) %>
+        <% } %>
+      </div>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control message" id="message-input" placeholder="Type your message here...">
+        <div class="input-group-append">
+          <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </body>
 </html>

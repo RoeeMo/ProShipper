@@ -1,4 +1,3 @@
-const { Timestamp } = require('bson');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -26,5 +25,5 @@ const itemSchema = new Schema({
 }, { timestamps: true });
 
 const Item = mongoose.model('Item', itemSchema); /* first argument is a singular of the collection we're trying to access 
-                                                    Collection in DB is called items, there fore we'll use Item.          */
+                                                    Collection in DB is called items, therefor we'll use Item.          */
 module.exports = Item;

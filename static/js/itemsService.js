@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Add item listener
     const addForm = document.getElementById('add-item');
     addForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -16,20 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (data.success) {
             Swal.fire({
-                title: "Item added successfully!",
+                title: data.msg,
                 icon: "success",
-                timer: 1200,
+                timer: 1100,
                 timerProgressBar: true,
             });
             setTimeout(() => {
                 location.reload();
-            }, 1000);
+            }, 900);
         } else {
-            Swal.fire("Oops", ("Something went wrong"), "error");
+            Swal.fire("Oops", data.msg, "error");
         };
     });
 
-
+    // Delete item listener
     const table = document.querySelector('table');
     table.addEventListener('click', async (event) => {
         const target = event.target;
@@ -48,9 +49,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
 
             if (data.success) {
-                location.reload();
+                Swal.fire({
+                    title: data.msg,
+                    icon: "success",
+                    timer: 1100,
+                    timerProgressBar: true,
+                });
+                setTimeout(() => {
+                    location.reload();
+                }, 900);
             } else {
-                Swal.fire('Oops', 'Something went wrong', 'error');
+                Swal.fire('Oops', data.msg, 'error');
             }
         }
     });
