@@ -11,6 +11,7 @@ async function getMessages(id) {
 function socketSetup(server) {
     const io = socketIO(server, { cors: { origin: "*" } });
     
+    // Authorization
     io.use((socket, next) => {
         // Get token from socket handshake
         const token = socket.handshake.headers.cookie
@@ -36,12 +37,12 @@ function socketSetup(server) {
         }
       });
     
+    // Handle messages
     io.on("connection", (socket) => {
         socket.on("message", (data) => {
             const newMessage = new Message({ text: data, sender: socket.username, item_id: socket.item_id });
             newMessage.save()
                 .then((result) => {
-                    console.log(result);
                 })
                 .catch((err) => {
                     console.log(err);
