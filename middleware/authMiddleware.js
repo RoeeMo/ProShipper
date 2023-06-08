@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const JWT_SECRET = process.env.TOP_SECRET;
 
-function requireAuth(type) {
+function requireAuth(type='user') {
     return function(req, res, next) {
         const token = req.cookies.jwt;
 
@@ -14,6 +14,7 @@ function requireAuth(type) {
                     res.redirect('/login');
                 } else {
                     if (decodedToken.type == type || decodedToken.type == 'admin') {
+                        req.decodedToken = decodedToken;
                         next();
                     } else {
                         res.status(401).json({ success: false, msg: 'Not enough permissions' });
@@ -26,7 +27,6 @@ function requireAuth(type) {
     }
 };
 
-
 module.exports = {
     requireAuth
-}
+};

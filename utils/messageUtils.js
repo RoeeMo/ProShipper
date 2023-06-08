@@ -8,7 +8,7 @@ async function getMessages(id) {
     return(messages);
 };
 
-function socketSetup(server) {
+async function socketSetup(server) {
     const io = socketIO(server, { cors: { origin: "*" } });
     
     // Authorization
@@ -35,28 +35,24 @@ function socketSetup(server) {
         } else {
           return next(new Error("Authentication error"));
         }
-      });
+    });
     
-    // Handle messages
-    io.on("connection", (socket) => {
-        socket.on("message", (data) => {
-            const newMessage = new Message({ text: data, sender: socket.username, item_id: socket.item_id });
-            newMessage.save()
-                .then((result) => {
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        })
+    
+    await io.on("connection", (socket) => {
+        // Handle incoming messages
+        socket.on("message", async (data) => {
+            try {
+                const newMessage = new Message({ text: data, sender: socket.username, item_id: socket.item_id });
+                await newMessage.save();
+            } catch (err) {
+                console.log(err);
+            }
+        });
 
+        // Broadcast incoming messages
         socket.on("message", (data) => {
             io.emit("message", { message: data, username: socket.username });
           });
-      
-        socket.on("typing", (data) => {
-            socket.broadcast.emit("typing", data);
-          });
-      
     })
 };
 

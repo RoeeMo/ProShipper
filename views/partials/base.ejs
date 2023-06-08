@@ -16,21 +16,46 @@
       <div class="container-fluid">
         <a class="navbar-brand text-light" href="/">
           <img src="/images/icon.png" width="30" height="30" class="d-inline-block align-text-top">
-          ProShipper - Dropship like a pro
+          ProShipper
         </a>
         <div class="collapse navbar-collapse justify-content-end">
             <ul class="navbar-nav">
+              <% if (username) { %>
+                <li class="nav-item">
+                  <nav class="navbar navbar-dark bg-primary">
+                    <span class="navbar-text">
+                      <h5><a class="nav-link text-light" href="/items">Items</a></h5>
+                    </span>
+                  </nav>
+                </li>
+                <li class="nav-item">
+                  <nav class="navbar navbar-dark bg-primary">
+                    <span class="navbar-text">
+                      <h5><a class="nav-link text-light" href="/chat">Chat</a></h5>
+                    </span>
+                  </nav>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://hips.hearstapps.com/hmg-prod/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg" alt="User Avatar" class="rounded-circle" width="50" height="50">
+                    
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><div class="dropdown-header"><h5><b><%= username %></b></h5></div></li>
+                    <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                    <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                  </ul>
+                </li>
+              <% } else { %>
                 <li class="nav-item">
                   <a class="nav-link text-light" href="/signup">Sign Up</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link text-light" href="/login">Login</a>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link text-light" href="/logout">logout</a>
-                </li>
+              <% } %>
             </ul>
         </div>
       </div>
     </nav>
-    <div style="height:70px"></div>
+    <div style="height:90px"></div>

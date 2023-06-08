@@ -1,5 +1,3 @@
-const cookieUsername = (document.cookie?.split("; "))?.find(str => str.startsWith("username="))?.split("=")[1];
-
 const socket = io('https://proshipper-l8mb.onrender.com/');
 socket.on('conncetion');
 
@@ -8,7 +6,7 @@ socket.on('message', ({ message, username }) => {
   const messageContainer = document.createElement('div');
   messageContainer.classList.add('message-container');
 
-  if (username === cookieUsername) {
+  if (username === serverData.username) {
     messageContainer.classList.add('message-sent');
   } else {
     messageContainer.classList.add('message-received');

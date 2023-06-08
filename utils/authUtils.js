@@ -1,8 +1,8 @@
 const User = require('../models/user');
 const Bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 const uuid = require('uuid');
+require('dotenv').config();
 
 
 const JWT_SECRET = process.env.TOP_SECRET;
@@ -49,18 +49,25 @@ async function createUser(username, password, password2) {
     }
 };
 
-async function getUsername(token) {
-    return new Promise((resolve, reject) => {
-        jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
+
+/* For requests that doesn't require authorization. Those requests are handling
+   the need for a username with the requireAuth() function that they already use */
+function getUsername(req, res, next) {
+    username = '';
+    
+    if (req.cookies.jwt) {
+        jwt.verify(req.cookies.jwt, JWT_SECRET, (err, decodedToken) => {
             if (err) {
                 console.log(err.message);
-                reject(err);
+                next();
             } else {
-                resolve(decodedToken.username);
+                username = decodedToken.username;
+                next();
             }
         })
-    })
-    
+    } else {
+        next()
+    }
 };
 
 module.exports = {
