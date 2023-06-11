@@ -11,5 +11,6 @@ itemRouter.get('/items/:id', requireAuth('user'), itemController.item_details);
 // Actions
 itemRouter.post('/add-item', requireAuth('admin'), itemController.add_item);
 itemRouter.post('/del-item', requireAuth('admin'), itemController.del_item);
+itemRouter.post('/generate-pdf', requireAuth('user'), itemController.generate_pdf);
 
 module.exports = itemRouter;
