@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             Swal.fire({
                 title: "Oops",
-                html: "Something web wrong",
+                html: "Something went wrong",
                 icon: "error"
             });
         }
