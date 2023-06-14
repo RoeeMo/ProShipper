@@ -1,4 +1,4 @@
-const socket = io('https://proshipper-l8mb.onrender.com/');
+const socket = io('http://localhost:3000/');
 socket.on('conncetion');
 
 // sort incoming messages from socket
@@ -28,9 +28,9 @@ socket.on('message', ({ message, username }) => {
 
 // send a message
 function sendMessage() {
-  const messageText = document.querySelector('.message').value;
+  const messageText = document.getElementById("message-input").value;
   socket.emit('message', messageText);
-  document.querySelector('.message').value = '';
+  document.getElementById("message-input").value = '';
 };
 
 document.addEventListener('DOMContentLoaded', () => {

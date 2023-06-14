@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Add item listener
+    const openModalBtn = document.getElementById("open-modal-btn");
+    const modal = new bootstrap.Modal(document.getElementById("add-item-modal"));
+
+    openModalBtn.addEventListener("click", function() {
+    modal.show(); // Bootstrap function
+    });
+    
+    // "Add item" listener
     const addForm = document.getElementById('add-item');
     addForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -26,12 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 location.reload();
             }, 900);
         } else {
-            Swal.fire("Oops", data.msg, "error");
+            Swal.fire({
+                title: "Oops",
+                html: data.msg,
+                icon: "error"
+            });
         };
     });
 
-    // Delete item listener
-    const table = document.querySelector('table');
+    // "Delete item" listener
+    const table = document.getElementById('item-table');
     table.addEventListener('click', async (event) => {
         const target = event.target;
 
@@ -59,15 +70,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     location.reload();
                 }, 900);
             } else {
-                Swal.fire('Oops', data.msg, 'error');
+                Swal.fire({
+                    title: "Oops",
+                    html: data.msg,
+                    icon: "error"
+                });
             }
         }
     });
     
-    // Generate PDF listener
-    const generatePDF = document.getElementById('generatePDFBtn');
-    generatePDF.addEventListener('click', function() {
-        const table = document.getElementById('itemTable');
+    // "Generate PDF" listener
+    const generatePDF = document.getElementById('generate-pdf-btn');
+    generatePDF.addEventListener('click', async () => {
+        const table = document.getElementById('item-table');
         const rows = table.getElementsByTagName('tr');
         
         // An array to store the items
@@ -93,20 +108,44 @@ document.addEventListener('DOMContentLoaded', () => {
             items.push(item);
         };
 
-        fetch('/generate-pdf', {
-          method: 'POST',
-          headers: {
+        
+        const response = await fetch('/generate-pdf', {
+            method: 'POST',
+            headers: {
             'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ items: items })
-        })
-        .then(response => response.blob())
-        .then(blob => {
-          // Create a new blob URL from the PDF blob
-          var blobUrl = URL.createObjectURL(blob);
-          // Open the generated PDF in a new browser tab
-          window.open(blobUrl);
-        })
-        .catch(error => console.error('Error:', error));
-      });
+            },
+            body: JSON.stringify({ items: items })
+        });
+        
+        if (response.ok) {
+            const contentType = response.headers.get('Content-Type');
+            if (contentType && contentType.includes('application/pdf')) {
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                window.open(blobUrl);
+            } else {
+                const data = await response.json();
+                if (!data.success) {
+                    Swal.fire({
+                        title: "Oops",
+                        html: data.msg,
+                        icon: "error"
+                    });
+                }
+            }
+        } else {
+            Swal.fire({
+                title: "Oops",
+                html: "Something web wrong",
+                icon: "error"
+            });
+        }
+    });
 });
+
+
+// Dynamically expands the item's "Description" input box
+function autoSize(textarea) {
+    textarea.style.height = "auto";
+    textarea.style.height = (textarea.scrollHeight) + "px";
+};

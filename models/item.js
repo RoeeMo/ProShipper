@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const itemSchema = new Schema({
     name: {
         type: String,
+        index: 'text',
         required: true
     },
     price: {
@@ -20,6 +21,7 @@ const itemSchema = new Schema({
     },
     description: {
         type: String,
+        index: 'text',
         required: false
     }
 }, { timestamps: true });

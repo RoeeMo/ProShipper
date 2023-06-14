@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.querySelector('form');
+    const form = document.getElementById('login-form');
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -25,7 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = '/items';
             }, 700);
         } else {
-            Swal.fire("Oops", data.msg, "error");
+            Swal.fire({
+                title: "Oops",
+                html: data.msg,
+                icon: "error"
+            });
         }
     })
 });

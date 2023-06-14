@@ -113,13 +113,31 @@ async function generate_pdf(req, res) {
   pdf.create(htmlContent, options).toStream((err, stream) => {
     if (err) {
       console.error(err);
-      res.status(500).send('An error occurred');
+      res.status(500).json({ success: false, msg: 'Something went wrong' });;
     } else {
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', 'inline; filename=generated.pdf');
       stream.pipe(res);
     }
-  });
+  })
+};
+
+async function search(req, res){
+  const searchTerm = req.query.term; // Retrieve the search term from the query parameters
+
+  try {
+    // Perform the search operation
+    const searchResults = await Item.find(
+      { $text: { $search: searchTerm } },
+      { score: { $meta: 'textScore' } }
+      ).sort({ score: { $meta: 'textScore' } }); // Sort the results by text score if needed
+
+    // Return search results
+    res.json(searchResults);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
 };
 
 module.exports = {
@@ -127,5 +145,6 @@ module.exports = {
     item_details,
     add_item,
     del_item,
-    generate_pdf
+    generate_pdf,
+    search
 };
