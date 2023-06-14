@@ -1,4 +1,4 @@
-const socket = io('http://localhost:3000/');
+const socket = io('https://proshipper-l8mb.onrender.com/');
 socket.on('conncetion');
 
 // sort incoming messages from socket
