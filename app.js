@@ -25,7 +25,7 @@ try {
 // Start Server and Socket
 function startServer() {
   const server = app.listen(3000, () => {
-    console.log("Server running on https://proshipper-l8mb.onrender.com");
+    console.log(`Server running on ${process.env.BASE_URL}`);
   });
   socketSetup(server);
 }
