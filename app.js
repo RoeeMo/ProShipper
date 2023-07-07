@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose');
 const itemRoutes = require('./routes/itemRoutes');
 const authRoutes = require('./routes/authRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 const { socketSetup } = require("./utils/messageUtils");
 const { getUsername } = require('./utils/authUtils');
 require('dotenv').config();
@@ -14,12 +15,12 @@ const app = express();
 // MongoDB Connection
 const dbURI = process.env.MONGO_URI;
 try {
-    mongoose.connect(dbURI);
-    console.log("Database connected");
-    startServer();
+  mongoose.connect(dbURI);
+  console.log("Database connected");
+  startServer();
 } catch (err) {
-    console.log(err);
-    process.exit(1);
+  console.log(err);
+  process.exit(1);
 };
 
 // Start Server and Socket
@@ -42,12 +43,13 @@ app.use(morgan('dev'));
 // Routes
 app.use(authRoutes);
 app.use(itemRoutes);
+app.use(chatRoutes);
 app.get('/', getUsername, (req, res) => {
-    res.render('index', { title: 'Home', 'username': username });
+  res.render('index', { title: 'Home', 'username': username });
 })
 
 
 // This function must always be the last piece of code
 app.use(getUsername, (req, res) => {
-    res.status(404).render('404', { title: '404', 'username': username });
+  res.status(404).render('404', { title: '404', 'username': username });
 });

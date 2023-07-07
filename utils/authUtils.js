@@ -70,8 +70,23 @@ function getUsername(req, res, next) {
     }
 };
 
+async function getUsernameOrID(input, type) {
+    let user;
+
+    if (type === 'id') {
+        user = await User.findById(input);
+        return user.username;
+    } else if (type === 'username') {
+        user = await User.findOne({ username: input });
+        return user._id;
+    } else {
+        console.log("Check your code again :)")
+    }
+};
+
 module.exports = {
     createToken,
     createUser,
-    getUsername
+    getUsername,
+    getUsernameOrID
 }

@@ -1,4 +1,10 @@
-const socket = io(`${window.origin}`);
+const socket = io(`${window.origin}`, {
+  query: {
+    // if URL includes "items" send item_id in the query, if "chat" is in URL send chosen username
+    ...(window.location.href.includes('items')) && { recipient: (window.location.href).split("/")[4], collection: 'item' },
+    ...(window.location.href.includes('chat') && { recipient: 'your-username-value', collection: 'private' })
+  }
+});
 socket.on('conncetion');
 
 // sort incoming messages from socket

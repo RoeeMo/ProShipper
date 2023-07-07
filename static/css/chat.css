@@ -1,6 +1,6 @@
 /* Outer container */
 #messages-block {
-  height: 80%;
+  height: 500px;
   overflow-y: scroll;
 }
 

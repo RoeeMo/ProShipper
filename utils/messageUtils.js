@@ -1,12 +1,29 @@
-const Message = require('../models/message');
+const { Message,  itemMessage, privateMessage } = require('../models/message.js');
+const { getUsernameOrID } = require('../utils/authUtils.js');
 const socketIO = require('socket.io');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-async function getMessages(id) {
-    const messages = await Message.find({ item_id: id })
-    return(messages);
+async function getMessages(collection, id1, id2) {
+    if (collection === 'item') {
+        const messages = await itemMessage.find({ item_id: id1 });
+        return messages;
+    // Specific chat messages. id1 and id2 represent each side of the conversation
+    } else if (id2 && collection === 'private') {
+        const messages = await privateMessage.find({
+            $or: [
+                { $and: [{ recipient: id1 }, { sender: id2 }] },
+                { $and: [{ recipient: id2 }, { sender: id1 }] }
+            ]
+        });
+        return messages;
+    // Active Chats
+    } else if (collection === 'private') {
+        const messages = await privateMessage.find({ $or: [{ recipient: id1 }, { sender: id1 }] }); // Get all messages that were sent to/by the user
+        return messages;
+    }
 };
+
 
 async function socketSetup(server) {
     const io = socketIO(server, { cors: { origin: "*" } });
@@ -28,7 +45,9 @@ async function socketSetup(server) {
             } else {
                 socket.decodedToken = decodedToken;
                 socket.username = decodedToken.username;
-                socket.item_id = ((socket.request.headers.referer).split("/"))[4];
+                socket.userID = decodedToken.id;
+                socket.recipient = socket.handshake.query.recipient;
+                socket.collection = socket.handshake.query.collection;
                 return next();
             }
             });
@@ -37,22 +56,25 @@ async function socketSetup(server) {
         }
     });
     
-    
     await io.on("connection", (socket) => {
         // Handle incoming messages
         socket.on("message", async (data) => {
             try {
-                const newMessage = new Message({ text: data, sender: socket.username, item_id: socket.item_id });
-                await newMessage.save();
+                let newMessage;
+                // Determine in which collection the socket's messages should be stored
+                if (socket.collection === 'item'){
+                    newMessage = new itemMessage({ text: data, sender: socket.userID, item_id: socket.recipient });
+                } else if (socket.collection === 'private') {
+                    newMessage = new privateMessage({ text: data, sender: socket.userID, recipient: getUsernameOrID(socket.recipient, 'username') }); // The frontend sends the recipient's username and not the recipient's id for security reasons 
+                } else {
+                    console.log(socket.collection)
+                }
+                await newMessage.save(); // If the user sends an undefined collection this line throws an error, but the app keeps running
+                io.emit("message", { message: data, username: socket.username }); // Broadcast incoming messages
             } catch (err) {
                 console.log(err);
             }
         });
-
-        // Broadcast incoming messages
-        socket.on("message", (data) => {
-            io.emit("message", { message: data, username: socket.username });
-          });
     })
 };
 
