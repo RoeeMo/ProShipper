@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await fetch('/signup', { 
             method: 'POST', 
             body: JSON.stringify({ username, password, password2 }),
-            headers: {'Content-Type': 'application/json'}
+            headers: { 'Content-Type': 'application/json' }
         });
         const data = await res.json();
 

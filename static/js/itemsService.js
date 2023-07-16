@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const currency = addForm.currency.value;
         const image_url = addForm.image_url.value;
         const description = addForm.description.value;
-        const res = await fetch('https://proshipper-l8mb.onrender.com/add-item', { 
+        const res = await fetch(`${document.location.origin}/add-item`, { 
             method: 'POST', 
             body: JSON.stringify({ name, price, currency, image_url, description }),
             headers: {'Content-Type': 'application/json'}

@@ -20,8 +20,10 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.4",
     "morgan": "^1.10.0",
+    "node-cron": "^3.0.2",
+    "nodemailer": "^6.9.3",
+    "nodemon": "^3.0.1",
     "socket.io": "^4.6.1",
-    "sweetalert2": "^11.7.3",
-    "uuid": "^9.0.0"
+    "sweetalert2": "^11.7.3"
   }
 }

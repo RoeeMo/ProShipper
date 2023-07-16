@@ -1,7 +1,6 @@
 const User = require('../models/user');
 const Bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const uuid = require('uuid');
 require('dotenv').config();
 
 
@@ -9,25 +8,19 @@ const JWT_SECRET = process.env.TOP_SECRET;
 const maxAge = 6 * 60 * 60; // 6 hours
 
 function createToken(id, type, username) {
-    const jti = uuid.v4();
-    return jwt.sign({id, type, jti, username}, JWT_SECRET, { expiresIn: maxAge });
+    return jwt.sign({id, type, username}, JWT_SECRET, { expiresIn: maxAge });
 };
 
+
+/* The decision to separate createUser() as a standalone function was made to enhance
+   code organization and improve readability, despite its current single-use nature */
 async function createUser(username, password, password2) {
-    const re  = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{7,}$/;
-    const errors = [];
-    
     // Reduce DB traffic by checking for errors beforehand
     if (typeof username !== 'string' || typeof password !== 'string' || typeof password2 !== 'string' ||
-    !username.trim() || !password.trim() || !password2.trim()) {
+    !username || !password || !password2) {
         return { success: false, errors: ['Missing or invalid input.'] };
     }
-    if (!re.test(password)) {
-      errors.push("Please enter a password that is at least 7 characters long and contains at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*).");
-    }
-    if (password !== password2) {
-      errors.push("Passwords don't match.");
-    }
+    const errors = passwordVerification(password, password2);
     if (errors.length > 0) {
         return { success: false, errors: errors };
     }
@@ -40,6 +33,7 @@ async function createUser(username, password, password2) {
         const newUser = new User({
             username: username,
             password: Bcrypt.hashSync(password, 10),
+            passResetToken: ''
         });
         await newUser.save();
         return { success: true, newUser: newUser };
@@ -49,9 +43,21 @@ async function createUser(username, password, password2) {
     }
 };
 
+function passwordVerification(pass, pass2) {
+    const re  = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{7,}$/;
+    const errors = [];
 
-/* For requests that doesn't require authorization. Those requests are handling
-   the need for a username with the requireAuth() function that they already use */
+    if (!re.test(pass)) {
+        errors.push("Please enter a password that is at least 7 characters long and contains at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*).");
+    }
+    if (pass !== pass2) {
+        errors.push("Passwords don't match.");
+    }
+    return errors;
+};
+
+/* For requests that don't require authorization. Any request that require authorization
+handles the need for a username with the requireAuth() function that it already uses */
 function getUsername(req, res, next) {
     username = '';
     
@@ -73,5 +79,6 @@ function getUsername(req, res, next) {
 module.exports = {
     createToken,
     createUser,
-    getUsername
+    getUsername,
+    passwordVerification
 }

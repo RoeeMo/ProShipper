@@ -1,0 +1,46 @@
+<%- include('./partials/base.ejs') %>
+<script src="/js/profile.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
+<div class="container py-5">
+    <h1>Profile Page</h1>
+    <img class="rounded-circle" src="https://hips.hearstapps.com/hmg-prod/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg" alt="Profile Image" width="80" height="80">
+    <div class="profile-info mt-4">
+      <div class="fw-bold"><h3><%= username %></h3></div>
+      <div class="mt-4">
+        <form id="change-pass-form">
+          <h2>Change Password</h2>
+          <div class="form-group">
+            <label for="currentPassword" class="form-label">Current Password</label>
+            <input type="password" class="form-control" id="current-password" name="currentPassword">
+          </div>
+          <div class="form-group">
+            <label for="newPassword" class="form-label">New Password</label>
+            <input type="password" class="form-control" id="new-password" name="newPassword">
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+            <input type="password" class="form-control" id="confirm-password" name="confirmPassword">
+          </div>
+          <button class="btn btn-primary">Change Password</button>
+        </form>
+      </div>
+      <div class="mt-4">
+        <h2>Two-Factor Authentication</h2>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="enable2FA" name="enable2FA">
+          <label class="form-check-label" for="enable2FA">Enable Two-Factor Authentication</label>
+        </div>
+        <div class="mt-3 d-flex align-items-center">
+            <label for="sendMethod" class="form-label me-2">Send Code via:</label>
+            <select class="form-select me-2 w-auto" id="sendMethod" name="sendMethod">
+              <option value="email">Email</option>
+              <option value="phone">Phone Number</option>
+            </select>
+            <input type="text" class="form-control" id="additionalInput" name="additionalInput" placeholder="Additional Input">
+        </div>
+      </div>
+    </div>
+</div>
+</body>
+</html>

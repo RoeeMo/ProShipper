@@ -1,4 +1,4 @@
-const socket = io('https://proshipper-l8mb.onrender.com/');
+const socket = io(`${document.location.origin}/`);
 socket.on('conncetion');
 
 // sort incoming messages from socket

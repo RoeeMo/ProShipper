@@ -11,6 +11,22 @@ const userSchema = new Schema( {
         type: String,
         required: true
     },
+    email: {
+        type: String,
+        required: false,
+        unique: true
+    },
+    passResetToken: {
+        type: String,
+        required: false,
+        unique: false // The value is unique for each user, but defining it in the DB will cause an error when the value is set to null
+    },
+    passResetTokenExpires: {
+        type: Number,
+        integer: true,
+        required: false,
+        unique: false
+    },
     type: {
         type: String,
         enum: ['user', 'admin'],

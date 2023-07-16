@@ -1,10 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('login-form');
-
-    form.addEventListener('submit', async (e) => {
+    const loginForm = document.getElementById('login-form');
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const username = form.username.value;
-        const password = form.password.value;
+        const username = loginForm.username.value;
+        const password = loginForm.password.value;
         const res = await fetch('/login', { 
             method: 'POST', 
             body: JSON.stringify({ username, password }),
@@ -31,5 +30,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 icon: "error"
             });
         }
-    })
+    });
+
+    const resetPassForm = document.getElementById('reset-pass-form');
+    resetPassForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        email = resetPassForm.email.value;
+        await fetch('/user/forgot-pass', {
+            method: 'POST',
+            body: JSON.stringify({ email }),
+            headers: {'Content-Type': 'application/json'}
+        });
+        Swal.fire({
+            title: "A reset link was sent to your email, please check your inbox",
+            icon: "success",
+            showConfirmButton: false,
+            timer: 1300,
+            });
+    });
 });

@@ -5,17 +5,40 @@
     <div class="container">
       <h3 align="center">Login</h3>
       <form method="POST" id="login-form">
-          <div class="form-group">
+        <div class="form-group">
           <label for="username">Username</label>
-          <input type="username" class="form-control" id="username" name="username" placeholder="Enter username"/>
-          </div>
-          <div class="form-group">
+          <input type="username" class="form-control" id="username" name="username" placeholder="Enter username" />
+        </div>
+        <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" class="form-control" id="password" name="password"/>
-          </div>
-          <br/>
-          <button type="submit" class="btn btn-primary">Login</button>
+          <input type="password" class="form-control" id="password" name="password" />
+        </div>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot Password?</a>
+        <br />
+        <button type="submit" class="btn btn-primary">Login</button>
       </form>
+    </div>
+    
+    <!-- Forgot Password Modal -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="forgotPasswordModalLabel">Reset Password</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="reset-pass-form">
+              <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+              </div>
+              <button class="btn btn-primary">Reset Password</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

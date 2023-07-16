@@ -6,6 +6,7 @@ const itemRoutes = require('./routes/itemRoutes');
 const authRoutes = require('./routes/authRoutes');
 const { socketSetup } = require("./utils/messageUtils");
 const { getUsername } = require('./utils/authUtils');
+const UnvalidateResetPassTokens = require('./backgroundTasks');
 require('dotenv').config();
 
 
@@ -17,6 +18,7 @@ try {
     mongoose.connect(dbURI);
     console.log("Database connected");
     startServer();
+    UnvalidateResetPassTokens();
 } catch (err) {
     console.log(err);
     process.exit(1);
@@ -25,7 +27,7 @@ try {
 // Start Server and Socket
 function startServer() {
   const server = app.listen(3000, () => {
-    console.log("Server running on https://proshipper-l8mb.onrender.com");
+    console.log(`Server running on ${process.env.BASE_URL}`);
   });
   socketSetup(server);
 }
