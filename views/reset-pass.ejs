@@ -1,4 +1,5 @@
 <%- include('./partials/base.ejs') %>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script src="/js/reset-pass.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
 <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
@@ -13,6 +14,8 @@
         <label for="confirm-password">Confirm Password</label>
         <input type="password" class="form-control" id="confirm-password" name="confirmPassword" placeholder="Confirm new password">
       </div>
+      <div class="g-recaptcha" data-sitekey="6LcHES4nAAAAAERbZEk3t1WJXQWpNxUvbVvzCv4E"></div>
+      <br/>
       <button type="submit" class="btn btn-primary">Reset Password</button>
     </form>
   </div>

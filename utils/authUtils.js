@@ -14,10 +14,10 @@ function createToken(id, type, username) {
 
 /* The decision to separate createUser() as a standalone function was made to enhance
    code organization and improve readability, despite its current single-use nature */
-async function createUser(username, password, password2) {
+async function createUser(username, email, password, password2) {
     // Reduce DB traffic by checking for errors beforehand
-    if (typeof username !== 'string' || typeof password !== 'string' || typeof password2 !== 'string' ||
-    !username || !password || !password2) {
+    if (typeof username !== 'string' || typeof email !== 'string' || typeof password !== 'string' || typeof password2 !== 'string' ||
+    !username || !email || !password || !password2) {
         return { success: false, errors: ['Missing or invalid input.'] };
     }
     const errors = passwordVerification(password, password2);
@@ -26,14 +26,16 @@ async function createUser(username, password, password2) {
     }
   
     try {
-        const user = await User.findOne({ username: username });
+        const user = await User.findOne({
+             $or: [{ username: username }, { email: email }]  
+        });
         if (user) {
-            return { success: false, errors: ['A user has already registered with this username.'] };
+            return { success: false, errors: ['A user has already registered with this username/email.'] };
         }
         const newUser = new User({
             username: username,
-            password: Bcrypt.hashSync(password, 10),
-            passResetToken: ''
+            email: email,
+            password: Bcrypt.hashSync(password, 10)
         });
         await newUser.save();
         return { success: true, newUser: newUser };

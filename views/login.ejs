@@ -1,4 +1,5 @@
 <%- include('./partials/base.ejs') %>
+    <script src="https://www.google.com/recaptcha/api.js?onload=CaptchaCallback&render=explicit" async defer></script>    
     <script src="/js/login.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
@@ -14,6 +15,7 @@
           <input type="password" class="form-control" id="password" name="password" />
         </div>
         <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot Password?</a>
+        <div id="login-recaptcha"></div>
         <br />
         <button type="submit" class="btn btn-primary">Login</button>
       </form>
@@ -34,11 +36,20 @@
                 <label for="email" class="form-label">Email Address</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
               </div>
+              <div id="reset-pass-recaptcha"></div>
+              <br/>
               <button class="btn btn-primary">Reset Password</button>
             </form>
           </div>
         </div>
       </div>
     </div>
+<script>
+// Render Multiple reCAPTCHAs in the same page
+function CaptchaCallback() {
+  grecaptcha.render('login-recaptcha', {'sitekey' : '6LcHES4nAAAAAERbZEk3t1WJXQWpNxUvbVvzCv4E'});
+  grecaptcha.render('reset-pass-recaptcha', {'sitekey' : '6LcHES4nAAAAAERbZEk3t1WJXQWpNxUvbVvzCv4E'});
+};
+</script>
   </body>
 </html>

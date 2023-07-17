@@ -1,4 +1,5 @@
 <%- include('./partials/base.ejs') %>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
         <script src="/js/signup.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
         <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
@@ -11,6 +12,10 @@
                     <input type="username" class="form-control" id="username" name="username" placeholder="Enter username"/>
                 </div>
                 <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address"/>
+                </div>
+                <div class="form-group">
                     <label for="password1">Password</label>
                     <input type="password" class="form-control" id="password" name="password" placeholder="Enter password"/>
                 </div>
@@ -18,6 +23,7 @@
                     <label for="password2">Confirm Password</label>
                     <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm password"/>
                 </div>
+                <div class="g-recaptcha" data-sitekey="6LcHES4nAAAAAERbZEk3t1WJXQWpNxUvbVvzCv4E"></div>
                 <br/>
                 <button class="btn btn-primary">Sign Up!</button>
             </form>

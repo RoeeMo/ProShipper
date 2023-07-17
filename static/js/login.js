@@ -4,9 +4,11 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const username = loginForm.username.value;
         const password = loginForm.password.value;
+        // const recaptchaResponse = grecaptcha.getResponse('login-recaptcha');
+        const recaptchaResponse = grecaptcha.getResponse(0);
         const res = await fetch('/login', { 
             method: 'POST', 
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ username, password, recaptchaResponse }),
             headers: {'Content-Type': 'application/json'}
         });
         const data = await res.json();
@@ -35,17 +37,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetPassForm = document.getElementById('reset-pass-form');
     resetPassForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        email = resetPassForm.email.value;
-        await fetch('/user/forgot-pass', {
+        const email = resetPassForm.email.value;
+        // const recaptchaResponse = grecaptcha.getResponse('reset-pass-recaptcha');
+        const recaptchaResponse = grecaptcha.getResponse(1);
+        const res = await fetch('/user/forgot-pass', {
             method: 'POST',
-            body: JSON.stringify({ email }),
+            body: JSON.stringify({ email, recaptchaResponse }),
             headers: {'Content-Type': 'application/json'}
         });
-        Swal.fire({
-            title: "A reset link was sent to your email, please check your inbox",
-            icon: "success",
-            showConfirmButton: false,
-            timer: 1300,
+        const data = await res.json();
+        if (data.success) {
+            Swal.fire({
+                title: data.msg,
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1300,
             });
+        } else {
+            Swal.fire({
+                title: "Oops",
+                html: data.msg,
+                icon: "error"
+            });
+        }
     });
 });

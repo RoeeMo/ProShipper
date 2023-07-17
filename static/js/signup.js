@@ -4,11 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const username = form.username.value;
+        const email = form.email.value;
         const password = form.password.value;
         const password2 = form.password2.value;
+        const recaptchaResponse = grecaptcha.getResponse();
         const res = await fetch('/signup', { 
             method: 'POST', 
-            body: JSON.stringify({ username, password, password2 }),
+            body: JSON.stringify({ username, email, password, password2, recaptchaResponse }),
             headers: { 'Content-Type': 'application/json' }
         });
         const data = await res.json();

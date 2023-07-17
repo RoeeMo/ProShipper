@@ -19,7 +19,8 @@ const userSchema = new Schema( {
     passResetToken: {
         type: String,
         required: false,
-        unique: false // The value is unique for each user, but defining it in the DB will cause an error when the value is set to null
+        unique: true,
+        sparse: true // Allows multiple documents to have null values for the indexed field while still enforcing uniqueness for non-null values
     },
     passResetTokenExpires: {
         type: Number,

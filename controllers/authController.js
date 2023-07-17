@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const { createToken, createUser, passwordVerification } = require('../utils/authUtils');
+const { verifyRecaptcha } = require('../utils/generalUtils')
 const Bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
@@ -8,6 +9,7 @@ require('dotenv').config();
 
 // Globals
 const maxAge = 6 * 60 * 60 * 1000; // 6 hours
+const passResetTokenLength = 32;
 const transporter = nodemailer.createTransport({
     service: 'SendGrid',
     auth: {
@@ -26,7 +28,13 @@ function signup_get(req, res) {
 };
 
 async function signup_post(req, res) {
-    const result = await createUser((req.body.username).trim(), (req.body.password).trim(), (req.body.password2).trim());
+    // Verify reCAPTCHA
+    const recaptchaResult = await verifyRecaptcha(req.body.recaptchaResponse);
+    if (!recaptchaResult.success) {
+        return res.status(400).json({ success: false, msg: 'reCAPTCHA verification failed' });
+    }
+
+    const result = await createUser((req.body.username).trim(), (req.body.email).trim(), (req.body.password).trim(), (req.body.password2).trim());
     if (result['success']) {
         const token = createToken(result.newUser._id, result.newUser.type, result.newUser.username);
         res.cookie('jwt', token, { httpOnly: true, sameSite: 'lax', maxAge: maxAge });
@@ -46,6 +54,12 @@ function login_get(req, res) {
 };
 
 async function login_post(req, res) {
+    // Verify reCAPTCHA
+    const recaptchaResult = await verifyRecaptcha(req.body.recaptchaResponse);
+    if (!recaptchaResult.success) {
+        return res.status(400).json({ success: false, msg: 'reCAPTCHA verification failed' });
+    }
+
     if (!req.body.username || !req.body.password) {
         return res.status(400).json({ success: false, msg: 'Missing parameters' });
     };
@@ -100,6 +114,12 @@ async function changePass(req, res) {
 
 async function forgotPass(req, res){
     try {
+        // Verify reCAPTCHA
+        const recaptchaResult = await verifyRecaptcha(req.body.recaptchaResponse);
+        if (!recaptchaResult.success) {
+            return res.status(400).json({ success: false, msg: 'reCAPTCHA verification failed' });
+        }
+    
         const user = await User.findOne({ email: req.body.email })
         // Always send the same response to block username harvesting attempts
         if (!user) {
@@ -108,7 +128,7 @@ async function forgotPass(req, res){
             let passResetToken;
             // Verify the generated token is not assigned to another user already
             while (true) {
-                passResetToken = crypto.randomBytes(Math.ceil(32 / 2)).toString('hex'); // each byte is represented by two characters in hexadecimal format, therefore the token's length will be 32
+                passResetToken = crypto.randomBytes(Math.ceil(passResetTokenLength / 2)).toString('hex'); // each byte is represented by two characters in hexadecimal format, therefore the token's length will be 32
                 const is_the_token_assign = await User.findOne({ passResetToken: passResetToken });
                 if (!is_the_token_assign) {
                     break
@@ -129,11 +149,11 @@ async function forgotPass(req, res){
             };
             transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
-                console.error('Error:', error);
-                return res.status(500).json({ success: false, msg: 'Something went wrong on our end, please try again later.' });
+                    console.error('Error:', error);
+                    return res.status(500).json({ success: false, msg: 'Something went wrong on our end, please try again later.' });
                 } else {
-                console.log('Email sent:', info.response);
-                return res.status(200).json({ success: true, msg: 'Password reset email sent, please check your email.' });
+                    console.log('Email sent:', info.response);
+                    return res.status(200).json({ success: true, msg: 'Password reset email sent, please check your email.' });
                 }
             });
         }
@@ -144,9 +164,16 @@ async function forgotPass(req, res){
 };
 
 async function resetPass(req, res){
+    // Verify reCAPTCHA
+    const recaptchaResult = await verifyRecaptcha(req.body.recaptchaResponse);
+    if (!recaptchaResult.success) {
+        return res.status(400).json({ success: false, msg: 'reCAPTCHA verification failed' });
+    }
+
+    resetToken = req.body.reset_token;
     // In case someone got to the page not through the email, therefore missing the needed token.
-    if (!req.body.reset_token || req.body.reset_token === '') { 
-        return res.status(400).json({ success: false, msg: 'Are you sure you got here the right way ? :)' });
+    if (!resetToken || resetToken.length !== passResetTokenLength) { 
+        return res.status(400).json({ success: false, msg: 'Are you sure you got here the right way? :)' });
     }
     
     // Verify password before querying the database
@@ -156,7 +183,7 @@ async function resetPass(req, res){
     };
     
     try {
-        const user = await User.findOne({ passResetToken: req.body.reset_token });
+        const user = await User.findOne({ passResetToken: resetToken });
         if (user) {
             user.password = Bcrypt.hashSync(req.body.new_pass, 10);
             user.passResetToken = undefined; // Removes the token so it can't be reused
@@ -164,7 +191,7 @@ async function resetPass(req, res){
             await user.save();
             return res.status(200).json({ success: true, msg: 'Password changed successfully.' });
         } else {
-            return res.status(400).json({ success: false, msg: 'Wrong password.' });
+            return res.status(400).json({ success: false, msg: "Are you sure you got here the right way? :)" });
         }
     } catch (err) {
         console.log(err);
