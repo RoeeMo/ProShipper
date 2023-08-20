@@ -43,13 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // "Delete item" listener
     const table = document.getElementById('item-table');
-    table.addEventListener('click', async (event) => {
-        const target = event.target;
+    table.addEventListener('click', async (e) => {
+        const target = e.target;
 
         if (target.classList.contains('delete-btn')) {
             const itemId = target.dataset.id;
             const url = '/del-item';
             const id = { id: itemId };
+            
 
             const res = await fetch(url, {
                 method: 'POST',
@@ -141,6 +142,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    // Expands the "Description" input box
+    const description = document.getElementById('description');
+    description.addEventListener('input', () => {
+        autoSize(description);
+    })
 });
 
 

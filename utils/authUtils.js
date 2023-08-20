@@ -24,21 +24,22 @@ async function createUser(username, email, password, password2) {
     if (errors.length > 0) {
         return { success: false, errors: errors };
     }
-  
+
     try {
         const user = await User.findOne({
              $or: [{ username: username }, { email: email }]  
         });
         if (user) {
             return { success: false, errors: ['A user has already registered with this username/email.'] };
+        } else {
+            const newUser = new User({
+                username: username,
+                email: email,
+                password: Bcrypt.hashSync(password, 10)
+            });
+            await newUser.save();
+            return { success: true, newUser: newUser };
         }
-        const newUser = new User({
-            username: username,
-            email: email,
-            password: Bcrypt.hashSync(password, 10)
-        });
-        await newUser.save();
-        return { success: true, newUser: newUser };
     } catch (err) {
         console.log(err.message)
         return { success: false, errors: ['Something went wrong, please try again later'] };

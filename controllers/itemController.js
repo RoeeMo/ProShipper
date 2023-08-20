@@ -3,29 +3,29 @@ const { getMessages } = require('../utils/messageUtils');
 const pdf = require('html-pdf');
 const { encode } = require('html-entities');
 
-async function item_table(req, res) {
+async function listItems(req, res) {
     try {
         const result = await Item.find().sort({ createdAt: 1 })
-        res.render('items', { title: 'Items', username: req.decodedToken.username, items: result });
+        res.render('items', { title: 'Items', username: req.decodedToken.username, type:req.decodedToken.type, items: result });
     } catch (err) {
         console.log(err);
     }
 };
 
-async function item_details(req, res) {
+async function viewItem(req, res) {
     const id = req.params.id;
     try {
         const item = await Item.findById(id);
         const raw_messages = await getMessages(id);
         const sortedMessages = raw_messages.sort((a, b) => b.timestamp - a.timestamp);
-        return res.render('details', { item: item, messages: sortedMessages, username: req.decodedToken.username, title: `Item Details - ${item.name}` });
+        return res.render('item-details', { item: item, messages: sortedMessages, username: req.decodedToken.username, type:req.decodedToken.type, title: `Item Details - ${item.name}` });
     } catch (err) {
         console.log(err);  
-        return res.status(404).render('404', { title: 'Item not found', username: req.decodedToken.username });
+        return res.status(404).render('404', { title: 'Item not found', username: req.decodedToken.username, type:req.decodedToken.type });
     };
 };
 
-async function add_item(req, res) {
+async function addItem(req, res) {
     try {
         const item = new Item(req.body);
         await item.save();
@@ -36,7 +36,7 @@ async function add_item(req, res) {
     }
 };
 
-async function del_item(req, res) {
+async function deleteItem(req, res) {
     try{
         const itemId = req.body.id;
         await Item.findByIdAndDelete(itemId);
@@ -47,7 +47,7 @@ async function del_item(req, res) {
     }
 };
 
-async function generate_pdf(req, res) {
+async function generatePdf(req, res) {
   const items = req.body.items; 
 
   let tableRows = '';
@@ -141,10 +141,10 @@ async function search(req, res){
 };
 
 module.exports = {
-    item_table,
-    item_details,
-    add_item,
-    del_item,
-    generate_pdf,
+    listItems,
+    viewItem,
+    addItem,
+    deleteItem,
+    generatePdf,
     search
 };

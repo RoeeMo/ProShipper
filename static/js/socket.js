@@ -1,12 +1,12 @@
 const socket = io(`${document.location.origin}/`);
 socket.on('conncetion');
-
+const user = document.getElementById("username").textContent;
 // sort incoming messages from socket
 socket.on('message', ({ message, username }) => {
   const messageContainer = document.createElement('div');
   messageContainer.classList.add('message-container');
 
-  if (username === serverData.username) {
+  if (username === user) {
     messageContainer.classList.add('message-sent');
   } else {
     messageContainer.classList.add('message-received');
@@ -26,7 +26,7 @@ socket.on('message', ({ message, username }) => {
   messageContainer.scrollIntoView();
 });
 
-// send a message
+// Send a message
 function sendMessage() {
   const messageText = document.getElementById("message-input").value;
   socket.emit('message', messageText);
@@ -34,12 +34,19 @@ function sendMessage() {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  // If the user pressed enter
   const messageInput = document.getElementById("message-input");
-  messageInput.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-      event.preventDefault(); // prevent the default form submission behavior
+  messageInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+      e.preventDefault();
       sendMessage();
   }
+  // If the user pressed the "send " button
+  const sendButton = document.getElementById('send-button');
+  sendButton.addEventListener('click', (e) => {
+    e.preventDefault;
+    sendMessage();
+  })
   });
 
   // Scroll to the last message element when the page first loads

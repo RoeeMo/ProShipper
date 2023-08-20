@@ -30,28 +30,25 @@
         <div class="collapse navbar-collapse justify-content-end">
             <ul class="navbar-nav">
               <% if (username) { %>
+                <% if (type === 'admin') { %>
+                  <li class="nav-item">
+                    <span class="navbar-text">
+                      <h5><a class="nav-link text-light" href="/admin/users">User Management</a></h5>
+                    </span>
+                  </li>
+                <% }; %>
                 <li class="nav-item">
-                  <nav class="navbar navbar-dark bg-primary">
                     <span class="navbar-text">
                       <h5><a class="nav-link text-light" href="/items">Items</a></h5>
                     </span>
-                  </nav>
-                </li>
-                <li class="nav-item">
-                  <nav class="navbar navbar-dark bg-primary">
-                    <span class="navbar-text">
-                      <h5><a class="nav-link text-light" href="/chat">Chat</a></h5>
-                    </span>
-                  </nav>
                 </li>
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://hips.hearstapps.com/hmg-prod/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg" alt="User Avatar" class="rounded-circle" width="50" height="50">
-                    
+                    <img src="https://hips.hearstapps.com/hmg-prod/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg" alt="User Avatar" class="rounded-circle" width="35" height="35">
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><div class="dropdown-header"><h5><b><%= username %></b></h5></div></li>
-                    <li><a class="dropdown-item" href="/user/profile">Profile</a></li>
+                    <li><div class="dropdown-header"><h5><b id="username"><%= username %></b></h5></div></li>
+                    <li><a class="dropdown-item" href="/user">Profile</a></li>
                     <li><a class="dropdown-item" href="/logout">Logout</a></li>
                   </ul>
                 </li>
@@ -62,7 +59,7 @@
                 <li class="nav-item">
                   <a class="nav-link text-light" href="/login">Login</a>
                 </li>
-              <% } %>
+              <% }; %>
             </ul>
         </div>
       </div>

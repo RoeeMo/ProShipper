@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const current_pass = changePassForm.currentPassword.value;
         const new_pass = changePassForm.newPassword.value;
         const confirm_pass = changePassForm.confirmPassword.value;
+        changePassForm.reset();
         const res = await fetch('/user/change-pass', {
             method: 'POST',
             body: JSON.stringify({ current_pass, new_pass, confirm_pass }),
@@ -23,5 +24,5 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             Swal.fire("Oops", ((data.msg).replaceAll('.', '.<br><br>')), "error");
         }
-    })
-})
+    });
+});

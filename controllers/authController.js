@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const { createToken, createUser, passwordVerification } = require('../utils/authUtils');
-const { verifyRecaptcha } = require('../utils/generalUtils')
+const { verifyRecaptcha } = require('../utils/generalUtils');
 const Bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
@@ -19,15 +19,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Controllers
-function signup_get(req, res) {
-    if (username) {
-        return res.redirect('/items'); // If user logged in, redirect them to the 'items' page
-    } else {
-        return res.render('signup', { title: 'Sign-Up', 'username': username });
-    }
-};
-
-async function signup_post(req, res) {
+async function signup(req, res) {
     // Verify reCAPTCHA
     const recaptchaResult = await verifyRecaptcha(req.body.recaptchaResponse);
     if (!recaptchaResult.success) {
@@ -45,20 +37,12 @@ async function signup_post(req, res) {
     }
 };
 
-function login_get(req, res) {
-    if (username) {
-        return res.redirect('/items'); // If user logged in, redirect them to the 'items' page
-    } else {
-        return res.render('login', { title: 'Login', 'username': username });
-    }
-};
-
-async function login_post(req, res) {
+async function login(req, res) {
     // Verify reCAPTCHA
     const recaptchaResult = await verifyRecaptcha(req.body.recaptchaResponse);
     if (!recaptchaResult.success) {
         return res.status(400).json({ success: false, msg: 'reCAPTCHA verification failed' });
-    }
+    };
 
     if (!req.body.username || !req.body.password) {
         return res.status(400).json({ success: false, msg: 'Missing parameters' });
@@ -77,20 +61,6 @@ async function login_post(req, res) {
         return res.status(400).json({ success: false, msg: 'Something went wrong' });
     }
 };
-
-function logout_get(req, res) {
-    try {
-        res.clearCookie('jwt');
-        return res.redirect('/');
-    } catch (err) {
-        console.log(err);
-        return res.status(400).json({ success: false, msg: 'Something went wrong' });
-    }
-};
-
-function profile_get(req, res) {
-    res.render('profile', { username: req.decodedToken.username, title: 'Profile' });
-}
 
 async function changePass(req, res) {
     const errors = passwordVerification(req.body.new_pass, req.body.confirm_pass);
@@ -129,8 +99,8 @@ async function forgotPass(req, res){
             // Verify the generated token is not assigned to another user already
             while (true) {
                 passResetToken = crypto.randomBytes(Math.ceil(passResetTokenLength / 2)).toString('hex'); // each byte is represented by two characters in hexadecimal format, therefore the token's length will be 32
-                const is_the_token_assign = await User.findOne({ passResetToken: passResetToken });
-                if (!is_the_token_assign) {
+                const token_assign = await User.findOne({ passResetToken: passResetToken });
+                if (!token_assign) {
                     break
                 }
             }
@@ -200,12 +170,8 @@ async function resetPass(req, res){
 };
 
 module.exports = {
-    login_get,
-    login_post,
-    signup_get,
-    signup_post,
-    logout_get,
-    profile_get,
+    login,
+    signup,
     changePass,
     forgotPass,
     resetPass

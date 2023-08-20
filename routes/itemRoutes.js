@@ -5,13 +5,13 @@ const { requireAuth } = require('../middleware/authMiddleware');
 const itemRouter = express.Router();
 
 // Pages
-itemRouter.get('/items', requireAuth('user'), itemController.item_table);
-itemRouter.get('/items/:id', requireAuth('user'), itemController.item_details);
+itemRouter.get('/items', requireAuth('user'), itemController.listItems);
+itemRouter.get('/items/:id', requireAuth('user'), itemController.viewItem);
 
 // Actions
-itemRouter.post('/add-item', requireAuth('admin'), itemController.add_item);
-itemRouter.post('/del-item', requireAuth('admin'), itemController.del_item);
-itemRouter.post('/generate-pdf', requireAuth('user'), itemController.generate_pdf);
+itemRouter.post('/add-item', requireAuth('admin'), itemController.addItem);
+itemRouter.post('/del-item', requireAuth('admin'), itemController.deleteItem);
+itemRouter.post('/generate-pdf', requireAuth('user'), itemController.generatePdf);
 itemRouter.get('/search', requireAuth('user'), itemController.search);
 
 module.exports = itemRouter;

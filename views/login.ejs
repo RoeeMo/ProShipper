@@ -20,7 +20,6 @@
         <button type="submit" class="btn btn-primary">Login</button>
       </form>
     </div>
-    
     <!-- Forgot Password Modal -->
     <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel"
       aria-hidden="true">
@@ -44,12 +43,5 @@
         </div>
       </div>
     </div>
-<script>
-// Render Multiple reCAPTCHAs in the same page
-function CaptchaCallback() {
-  grecaptcha.render('login-recaptcha', {'sitekey' : '6LcHES4nAAAAAERbZEk3t1WJXQWpNxUvbVvzCv4E'});
-  grecaptcha.render('reset-pass-recaptcha', {'sitekey' : '6LcHES4nAAAAAERbZEk3t1WJXQWpNxUvbVvzCv4E'});
-};
-</script>
   </body>
 </html>

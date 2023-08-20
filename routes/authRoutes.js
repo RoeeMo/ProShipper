@@ -7,23 +7,50 @@ const { requireAuth } = require('../middleware/authMiddleware');
 const authRouter = express.Router();
 
 // Signup
-authRouter.get('/signup', getUsername, authController.signup_get);
-authRouter.post('/signup', authController.signup_post);
+authRouter.get('/signup', getUsername, (req, res) => {
+    // If user logged in, redirect them to the 'items' page
+    if (username) {
+        return res.redirect('/items'); 
+    } else {
+        return res.render('signup', { title: 'Sign-Up', 'username': username, type:'' }); 
+    }
+});
+authRouter.post('/signup', authController.signup);
 
 // Login
-authRouter.get('/login', getUsername, authController.login_get);
-authRouter.post('/login', authController.login_post);
+authRouter.get('/login', getUsername, (req, res) => {
+    // If user logged in, redirect them to the 'items' page
+    if (username) {
+        return res.redirect('/items');
+    } else {
+        return res.render('login', { title: 'Login', 'username': username, type: '' });
+    }
+});
+authRouter.post('/login', authController.login);
 
 // Logout
-authRouter.get('/logout', authController.logout_get);
-
-authRouter.get('/user/profile', requireAuth('user'), authController.profile_get);
-authRouter.post('/user/change-pass', requireAuth('user'), authController.changePass);
-authRouter.post('/user/forgot-pass', authController.forgotPass);
-authRouter.get('/user/reset-pass', getUsername, (req, res) => {
-    res.render('reset-pass', { title: 'Reset Password', 'username': username });
+authRouter.get('/logout', (req, res) => {
+    try {
+        res.clearCookie('jwt');
+        return res.redirect('/');
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ success: false, msg: 'Something went wrong' });
+    }
 });
-authRouter.post('/user/reset-pass', getUsername, authController.resetPass);
+
+// User
+authRouter.get('/user', requireAuth('user'), (req, res) => {
+    res.render('profile', { username: req.decodedToken.username, type:req.decodedToken.type, title: 'Profile' });
+});
+authRouter.post('/user/change-pass', requireAuth('user'), authController.changePass);
+
+// Forgot Password
+authRouter.post('/user/forgot-pass', authController.forgotPass);
+authRouter.post('/user/reset-pass', authController.resetPass);
+authRouter.get('/user/reset-pass', (req, res) => {
+    res.render('reset-pass', { title: 'Reset Password', 'username': username, type:'' });
+});
 
 
 module.exports = authRouter;

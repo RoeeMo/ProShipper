@@ -1,6 +1,5 @@
 <%- include('./partials/base.ejs') %>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
-<script> var serverData = { username: '<%= username %>' } </script>
 <script src="/js/socket.js"></script>
 <link rel="stylesheet" type="text/css" href="/css/chat.css"></link>
 <div class="container">
@@ -32,7 +31,7 @@
       <div class="input-group mb-3">
         <input type="text" class="form-control message" id="message-input" placeholder="Type your message here...">
         <div class="input-group-append">
-          <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+          <button class="btn btn-primary" id="send-button">Send</button>
         </div>
       </div>
     </div>

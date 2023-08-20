@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const User = require('./models/user');
 
 // Expired "reset password" tokens clenup every 15 minutes
-function UnvalidateResetPassTokens() {
+function unvalidateResetPassTokens() {
     cron.schedule('*/15 * * * *', async () => {
         try {
             const currentTime = new Date();
@@ -17,4 +17,4 @@ function UnvalidateResetPassTokens() {
     })
 };
 
-module.exports = UnvalidateResetPassTokens;
+module.exports = unvalidateResetPassTokens;

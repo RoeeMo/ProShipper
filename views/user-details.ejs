@@ -1,0 +1,36 @@
+<%- include('./partials/base.ejs') %>
+<script src="/js/admin.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
+<div class="container">
+    <h1 class="mt-5">User Details</h1>
+    <p>Welcome, <%= username %>! You are viewing the details of user: <%= user.username %></p>
+    <div id="user-details">
+        <h2>User Information</h2>
+        <form id="update-user">
+            <input type="hidden" id="id" name="id" value="<%= user._id %>">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username:</label>
+                <input type="text" class="form-control" id="username" name="username" value="<%= user.username %>">
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>">
+            </div>
+            <div class="mb-3">
+                <label for="type" class="form-label">Type:</label>
+                <select class="form-select" id="type" name="type">
+                    <option value="user" <%= user.type === 'user' ? 'selected' : '' %>>User</option>
+                    <option value="admin" <%= user.type === 'admin' ? 'selected' : '' %>>Admin</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary update-user">Update User</button>
+        </form>
+        <br>
+        <h2>Delete User</h2>
+        <p>This action is permanent, the user and all its related details will be deleted</p>
+        <button class="btn btn-danger delete-btn" data-id="<%= user._id %>">Delete</button>
+    </div>
+</div>
+</body>
+</html>
