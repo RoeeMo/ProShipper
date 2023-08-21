@@ -27,6 +27,7 @@ authRouter.get('/login', getUsername, (req, res) => {
     }
 });
 authRouter.post('/login', authController.login);
+authRouter.post('/login/otp', requireAuth('otp'), authController.otpLogin);
 
 // Logout
 authRouter.get('/logout', (req, res) => {

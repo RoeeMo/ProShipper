@@ -28,6 +28,24 @@ const userSchema = new Schema( {
         required: false,
         unique: false
     },
+    otpToken: {
+        type: String,
+        required: false,
+        unique: false // Doesn't need to be unique because it can only be accessed with a signed otp JWT
+    },
+    otpTokenExpires: {
+        type: Number,
+        integer: true,
+        required: false,
+        unique: false
+    },
+    otpTokenTries: {
+        type: Number,
+        integer: true,
+        default: 0,
+        required: false,
+        unique: false
+    },
     type: {
         type: String,
         enum: ['user', 'admin'],

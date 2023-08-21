@@ -50,15 +50,74 @@ async function login(req, res) {
     try {
         const user = await User.findOne({ username: req.body.username });
         if (user && Bcrypt.compareSync(req.body.password, user.password)) {
-            const token = createToken(user.id, user.type, user.username);
-            res.cookie('jwt', token, { httpOnly: true, sameSite: 'lax', maxAge: maxAge });
-            return res.status(302).json({ success: true, msg: 'Logged in successfully!' });
-        } else {
-            return res.status(400).json({ success: false, msg: 'Wrong username or password' });
+            const digits = '0123456789';
+            let otp = '';
+            for (let i = 0; i < 6; i++) { // set length of OTP to 6 digits
+            const randomIndex = crypto.randomInt(0, digits.length);
+            otp += digits.charAt(randomIndex);
+            }
+            user.otpToken = otp;
+            user.otpTokenExpires = Date.now() + 300000; // OTP will expire in 5 minutes
+            await user.save();
+            const mailOptions = {
+                from: 'proshipperapp@gmail.com',
+                to: user.email,
+                subject: 'Hello from ProShipper',
+                html: `<h1>Your One-Time Password (OTP)</h1>
+                <p>Use the following OTP to complete your authentication:</p>
+                <h2 style="font-size: 24px; color: #FF5733;">${otp}</h2>
+                <p>This OTP will expire in 5 minutes.</p>
+                <p>If you didn't request this OTP, please ignore this email.</p>`,
+            };
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.error('Error:', error);
+                    return res.status(500).json({ success: false, msg: 'Something went wrong on our end, please try again later.' });
+                } else {
+                    console.log(`email sent. ${info}`)
+                    const otpToken = createToken(id='', type='otp', username=user.username, age=60*5); // age of 5 minutes (in seconds)
+                    res.cookie('otp', otpToken, { httpOnly: true, sameSite: 'lax', maxAge: 300000 }); // age of 5 minutes (in milliseconds) 
+                    return res.status(200).json({ success: true, msg: 'OTP sent, please check your email.' });
+                }
+            });
         }
     } catch (err) {
         console.log(err);
         return res.status(400).json({ success: false, msg: 'Something went wrong' });
+    }
+};
+
+async function otpLogin(req, res) {
+    if (!req.body.otp) {
+        return res.status(400).json({ success: false, msg: 'Missing parameters' });
+    };
+    try {
+        const user = await User.findOne({ username: req.decodedToken.username });
+        if (user && user.otpTokenTries < 3) {
+            if (req.body.otp === user.otpToken) {
+                user.otpToken = undefined; // Removes the token so it can't be reused
+                user.otpTokenExpires = undefined;
+                await user.save();
+                const token = createToken(user.id, user.type, user.username);
+                res.cookie('jwt', token, { httpOnly: true, sameSite: 'lax', maxAge: maxAge });
+                res.clearCookie('otp');
+                return res.status(302).json({ success: true, msg: 'Logged in successfully!' });
+            } else {
+                user.otpTokenTries += 1; // Used to prevent brute force
+                await user.save();
+                return res.status(400).json({ success: false, msg: 'Wrong OTP' });
+            }
+        } else {
+            user.otpTokenTries = 0;
+            user.otpToken = undefined; // Removes the token due to brute-force
+            user.otpTokenExpires = undefined;
+            await user.save();
+            res.clearCookie('otp');
+            return res.status(400).json({ success: false, msg: 'Too many tries, please login again' });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ success: false, msg: 'Something went wrong' });
     }
 };
 
@@ -171,6 +230,7 @@ async function resetPass(req, res){
 
 module.exports = {
     login,
+    otpLogin,
     signup,
     changePass,
     forgotPass,

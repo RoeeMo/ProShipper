@@ -5,7 +5,7 @@ const JWT_SECRET = process.env.TOP_SECRET;
 
 function requireAuth(type='user') {
     return function(req, res, next) {
-        const token = req.cookies.jwt;
+        const token = req.cookies.jwt || req.cookies.otp;
 
         if (token) {
             jwt.verify(token, JWT_SECRET, (err, decodedToken) => {

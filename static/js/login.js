@@ -12,30 +12,64 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = loginForm.password.value;
         const recaptchaResponse = grecaptcha.getResponse(0);
         const res = await fetch('/login', { 
-            method: 'POST', 
-            body: JSON.stringify({ username, password, recaptchaResponse }),
-            headers: { 'Content-Type': 'application/json' }
+        method: 'POST', 
+        body: JSON.stringify({ username, password, recaptchaResponse }),
+        headers: { 'Content-Type': 'application/json' }
         });
         const data = await res.json();
 
-        if (data.success) {
-            Swal.fire({
+        if (data.success) {    
+            await Swal.fire({
                 title: data.msg,
-                html: "You'll be redirected shortly",
                 icon: "success",
                 showConfirmButton: false,
-                timer: 800,
-                timerProgressBar: true,
+                timer: 1300,
+            })
+            
+            // Show OTP modal
+            const otpModal = document.getElementById('otp-modal');
+            otpModal.classList.add('show'); // Show the modal backdrop
+            otpModal.style.display = 'block'; // Show the modal content
+            
+            // Handle OTP form submission
+            const otpForm = document.getElementById('otp-form');
+            otpForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const otp = otpForm.otp.value;
+                const res = await fetch('/login/otp', { 
+                    method: 'POST', 
+                    body: JSON.stringify({ otp }),
+                    headers: { 'Content-Type': 'application/json' }
                 });
-            setTimeout(() => {
-                window.location.href = '/items';
-            }, 700);
-        } else {
-            Swal.fire({
-                title: "Oops",
-                html: data.msg,
-                icon: "error"
+                const data = await res.json();
+                console.log(data);
+                
+                if (data.success) {
+                    Swal.fire({
+                        title: data.msg,
+                        html: "You'll be redirected shortly",
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 800,
+                        timerProgressBar: true,
+                        });
+                    setTimeout(() => {
+                        window.location.href = '/items';
+                    }, 700);
+                } else {
+                    Swal.fire({
+                        title: "Oops",
+                        html: data.msg,
+                        icon: "error"
+                    });
+                }
             });
+        } else {
+        Swal.fire({
+            title: "Oops",
+            html: data.msg,
+            icon: "error"
+        });
         }
     });
 

@@ -5,10 +5,10 @@ require('dotenv').config();
 
 
 const JWT_SECRET = process.env.TOP_SECRET;
-const maxAge = 6 * 60 * 60; // 6 hours
+const cookieAge = 6 * 60 * 60; // 6 hours
 
-function createToken(id, type, username) {
-    return jwt.sign({id, type, username}, JWT_SECRET, { expiresIn: maxAge });
+function createToken(id, type, username, age=cookieAge) {
+    return jwt.sign({id, type, username}, JWT_SECRET, { expiresIn: age });
 };
 
 
