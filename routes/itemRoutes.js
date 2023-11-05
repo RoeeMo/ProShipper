@@ -9,9 +9,10 @@ itemRouter.get('/items', requireAuth('user'), itemController.listItems);
 itemRouter.get('/items/:id', requireAuth('user'), itemController.viewItem);
 
 // Actions
-itemRouter.post('/add-item', requireAuth('admin'), itemController.addItem);
-itemRouter.post('/del-item', requireAuth('admin'), itemController.deleteItem);
-itemRouter.post('/generate-pdf', requireAuth('user'), itemController.generatePdf);
+itemRouter.put('/items', requireAuth('admin'), itemController.addItem);
+itemRouter.delete('/items/:id', requireAuth('admin'), itemController.deleteItem);
+itemRouter.delete('/items/delete-messages/:id', requireAuth('admin'), itemController.deleteMessagesOfItem);
+itemRouter.post('/items/generate-pdf', requireAuth('user'), itemController.generatePdf);
 itemRouter.get('/search', requireAuth('user'), itemController.search);
 
 module.exports = itemRouter;

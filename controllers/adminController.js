@@ -20,8 +20,7 @@ async function editUser(req, res) {
             username: req.body.username,
             email: req.body.email,
             type: req.body.type
-        }; // Specify the data so malicious users won't be able to modify fields we don't want them to by adding parameters to the JSON
-        console.log(userData);
+        }; // Specify the data so malicious users won't be able to modify fields we don't want them to by adding parameters to
         await User.updateOne({ _id: req.body.id }, { $set: userData });
         res.status(200).json({ success: true, msg: 'User updated successfully' });
     } catch (err) {

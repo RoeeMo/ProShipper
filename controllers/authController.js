@@ -109,7 +109,7 @@ async function otpLogin(req, res) {
             }
         } else {
             user.otpTokenTries = 0;
-            user.otpToken = undefined; // Removes the token due to brute-force
+            user.otpToken = undefined; // Removes the token after 3 tries to prevent brute-force
             user.otpTokenExpires = undefined;
             await user.save();
             res.clearCookie('otp');

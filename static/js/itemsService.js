@@ -15,8 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const currency = addForm.currency.value;
         const image_url = addForm.image_url.value;
         const description = addForm.description.value;
-        const res = await fetch(`${document.location.origin}/add-item`, { 
-            method: 'POST', 
+        
+        const res = await fetch('/items', { 
+            method: 'PUT', 
             body: JSON.stringify({ name, price, currency, image_url, description }),
             headers: {'Content-Type': 'application/json'}
         });
@@ -46,16 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
     table.addEventListener('click', async (e) => {
         const target = e.target;
 
+        // Delete item (Including its messages)
         if (target.classList.contains('delete-btn')) {
             const itemId = target.dataset.id;
-            const url = '/del-item';
-            const id = { id: itemId };
-            
 
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(id),
+            const res = await fetch(`/items/${itemId}`, {
+                method: 'DELETE'
             });
 
             const data = await res.json();
@@ -70,6 +67,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     location.reload();
                 }, 900);
+            } else {
+                Swal.fire({
+                    title: "Oops",
+                    html: data.msg,
+                    icon: "error"
+                });
+            }
+        };
+
+        // Delete only the item's messages
+        if (target.classList.contains('delete-messages-btn')) {
+            const itemId = target.dataset.id;
+
+            const res = await fetch(`/items/delete-messages/${itemId}`, {
+                method: 'DELETE'
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                Swal.fire({
+                    title: data.msg,
+                    icon: "success",
+                    timer: 900,
+                    timerProgressBar: true,
+                });
             } else {
                 Swal.fire({
                     title: "Oops",
@@ -110,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         
-        const response = await fetch('/generate-pdf', {
+        const response = await fetch('/items/generate-pdf', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'

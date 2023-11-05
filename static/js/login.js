@@ -54,7 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         timerProgressBar: true,
                         });
                     setTimeout(() => {
-                        window.location.href = '/items';
+                        redirectURL = new URLSearchParams(window.location.search).get('redirect');
+                        if (redirectURL) {
+                            window.location.href = window.location.origin+ '/' + redirectURL; // Secure against open redirect
+                        } else {
+                            window.location.href = '/items';
+                        }
                     }, 700);
                 } else {
                     Swal.fire({

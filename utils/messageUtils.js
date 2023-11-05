@@ -9,7 +9,7 @@ async function getMessages(id) {
 };
 
 async function socketSetup(server) {
-    const io = socketIO(server, { cors: { origin: "*" } });
+    const io = socketIO(server);
     
     // Authorization
     io.use((socket, next) => {
@@ -44,15 +44,11 @@ async function socketSetup(server) {
             try {
                 const newMessage = new Message({ text: data, sender: socket.username, item_id: socket.item_id });
                 await newMessage.save();
+                io.emit("message", { message: data, username: socket.username }); // Broadcast incoming messages
             } catch (err) {
                 console.log(err);
             }
         });
-
-        // Broadcast incoming messages
-        socket.on("message", (data) => {
-            io.emit("message", { message: data, username: socket.username });
-          });
     })
 };
 

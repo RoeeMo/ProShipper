@@ -2,6 +2,7 @@ const Item = require('../models/item');
 const { getMessages } = require('../utils/messageUtils');
 const pdf = require('html-pdf');
 const { encode } = require('html-entities');
+const Message = require('../models/message');
 
 async function listItems(req, res) {
     try {
@@ -37,14 +38,34 @@ async function addItem(req, res) {
 };
 
 async function deleteItem(req, res) {
-    try{
-        const itemId = req.body.id;
-        await Item.findByIdAndDelete(itemId);
-        return res.status(200).json({ success: true, msg: 'Item deleted successfully!' });
-    } catch {
+    try {
+        const itemId = req.params.id;
+        if (itemId) {
+          await Item.findByIdAndDelete(itemId);
+          await Message.deleteMany({ item_id: itemId });
+          return res.status(200).json({ success: true, msg: 'Item deleted successfully!' });
+        } else {
+          return res.status(400).json({ success: false, msg: 'What did you do? :)' });
+        }
+    } catch (err) {
         console.log(err);
         return res.status(500).json({ success: false, msg: 'Something went wrong' });
     }
+};
+
+async function deleteMessagesOfItem(req, res) {
+  try {
+      const itemId = req.params.id;
+      if (itemId) {
+        await Message.deleteMany({ item_id: itemId });
+        return res.status(200).json({ success: true, msg: 'Messages deleted successfully!' });
+      } else {
+        return res.status(400).json({ success: false, msg: 'What did you do? :)' });
+      }
+  } catch (err) {
+      console.log(err);
+      return res.status(500).json({ success: false, msg: 'Something went wrong' });
+  }
 };
 
 async function generatePdf(req, res) {
@@ -58,7 +79,7 @@ async function generatePdf(req, res) {
         <td>${encode(item.price)}</td>
         <td>${encode(item.description)}</td>
       </tr>
-    `; // encode() is used to prevent server side XSS
+    `; // The function encode() is used to prevent Server-Side XSS
   });
 
   const htmlContent = `
@@ -116,7 +137,7 @@ async function generatePdf(req, res) {
       return res.status(500).json({ success: false, msg: 'Something went wrong' });;
     } else {
       res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'inline; filename=generated.pdf');
+      res.setHeader('Content-Disposition', 'inline; filename=items.pdf');
       stream.pipe(res);
     }
   })
@@ -131,8 +152,6 @@ async function search(req, res){
       { $text: { $search: searchTerm } },
       { score: { $meta: 'textScore' } }
       ).sort({ score: { $meta: 'textScore' } }); // Sort the results by text score if needed
-
-    // Return search results
     return res.json(searchResults);
   } catch (error) {
     console.error(error);
@@ -145,6 +164,7 @@ module.exports = {
     viewItem,
     addItem,
     deleteItem,
+    deleteMessagesOfItem,
     generatePdf,
     search
 };
